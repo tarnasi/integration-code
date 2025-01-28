@@ -1,0 +1,48 @@
+name: FastAPI CI/CD Pipline
+
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
+
+jobs:
+    test-build-tag:
+        runs-on: ubuntu-latest
+
+        steps:
+            # Clone Code
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            # Python Config
+            - name: setup Python
+              uses: action/setup-python@v2
+              with:
+                  python-version: '3.11'
+
+            # Dependencies
+            - name: Install dependencies
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install -r requirements.txt
+
+            # Run Tests
+            - name: Run Tests
+              run: |
+                pytest
+
+            # Build Docker
+            - name: Build Docker Image
+              run: |
+                  docker build -t integration-app .
+
+            # Create new Tag
+            - name: Create and push tag
+              if: success() # if test passed code will be taged
+              run: |
+                  VERSION=$(date '+%Y.%m.%d-%H%M') # Based on datetime
+                  git tag -a "v$VERSION" -m "New version $VERSION"
+                  git push origin "v$VERSION"
