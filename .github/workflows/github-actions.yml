@@ -39,6 +39,12 @@ jobs:
               run: |
                   docker build -t integration-app .
 
+            # Git Config
+            - name: Configure Git user
+                run: |
+                  git config user.name "tarnasi"
+                  git config user.email "shahryar.tarnasi@gmail.com"
+
             # Create new Tag
             - name: Create and push tag
               if: success() # if test passed code will be taged
