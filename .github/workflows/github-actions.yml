@@ -42,8 +42,8 @@ jobs:
             # Git Config
             - name: Configure Git user
               run: |
-                git config user.name "Shahriyar"
-                git config user.email "shahryar.tarnasi@gmail.com"
+                git config --local user.name "GitHub Actions Bot"
+                git config --local user.email "actions@github.com"
 
             # Create new Tag
             - name: Create and push tag
