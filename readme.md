@@ -25,6 +25,89 @@ or install separately with below command
 
 <h2 id="#2-test">Install ``Pytest`` for test code ✅</h2>
 
+only run this command in main directory of the project
+
+```bash
+~$ pytest
+```
+
 <h2 id="#3-docker">Create Docker Image 🐳</h2>
 
+```docker
+
+FROM python:3.11
+
+
+WORKDIR /code
+
+
+COPY ./requirements.txt /code/requirements.txt
+
+
+RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+
+
+COPY ./app /code/app
+
+
+CMD ["fastapi", "run", "app/main.py", "--port", "8080"]
+```
+
 <h2 id="#4-repo">Repository Tags🍱</h2>
+
+Adding Github Workflow
+
+```githubexpressionlanguage
+name: FastAPI CI/CD Pipeline
+
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
+
+jobs:
+    test-build-tag:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Set up Python 3.10
+              uses: actions/setup-python@v3
+              with:
+                  python-version: "3.10"
+
+            - name: Install dependencies
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install -r requirements.txt
+
+            - name: Run Tests
+              run: |
+                pytest
+
+            - name: Build Docker Image
+              run: |
+                  docker build -t integration-app .
+
+            - name: Configure Git user
+              run: |
+                git config --local user.name "GitHub Action"
+                git config --local user.email "action@github.com"
+                git remote set-url origin ["YOUR REPOSITORY URL"]
+
+            - name: Create and push tag
+              if: success()
+              env:
+                  GH_PAT: ${{ secrets.GH_PAT }}
+              run: |
+                  VERSION=$(date '+%Y.%m.%d-%H%M')
+                  git tag -a "v$VERSION" -m "New version $VERSION"
+                  git push https://x-access-token:${{ secrets.GH_PAT }}@github.com/[USERNAME]/[REPO NAME].git "v$VERSION"
+
+```
