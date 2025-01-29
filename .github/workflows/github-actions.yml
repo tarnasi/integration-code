@@ -15,13 +15,13 @@ jobs:
         steps:
             # Clone Code
             - name: Checkout code
-              uses: actions/checkout@v2
+              uses: actions/checkout@v4
 
             # Python Config
-            - name: setup Python
-              uses: actions/setup-python@v2
+            - name: Set up Python 3.10
+              uses: actions/setup-python@v3
               with:
-                  python-version: '3.11'
+                  python-version: "3.10"
 
             # Dependencies
             - name: Install dependencies
@@ -42,14 +42,15 @@ jobs:
             # Git Config
             - name: Configure Git user
               run: |
-                git config --local user.name "GitHub Actions Bot"
-                git config --local user.email "actions@github.com"
+                git config --local user.name "GitHub Action"
+                git config --local user.email "action@github.com"
 
             # Create new Tag
             - name: Create and push tag
+              uses: ad-m/github-push-action@v0.8.0
               if: success() # if test passed code will be tag
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+              with:
+                  github_token: ${{ secrets.GH_PAT }}
               run: |
                   VERSION=$(date '+%Y.%m.%d-%H%M')
                   git tag -a "v$VERSION" -m "New version $VERSION"
