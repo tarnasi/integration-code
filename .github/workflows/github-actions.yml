@@ -48,6 +48,8 @@ jobs:
             # Create and Push Tag
             - name: Create and push tag
               if: success() # Only if tests pass
+              env:
+                  GH_PAT: ${{ secrets.GH_PAT }}
               run: |
                   VERSION=$(date '+%Y.%m.%d-%H%M')
                   git tag -a "v$VERSION" -m "New version $VERSION"
