@@ -57,6 +57,12 @@ CMD ["fastapi", "run", "app/main.py", "--port", "8080"]
 
 Adding Github Workflow
 
+- Create a personal Access Token via ``Profile > Settings > Developer Settings > Personal Access Token``
+    - (Important! : the permission of ``contents`` and ``workflow`` should be ``read/write``)
+
+- Create a repository secret via ``Main Page of repository > Repository setting > Actions secrets and variables > Actions``
+    - The Name of the secret key should be ``GH_PAT``
+
 ```githubexpressionlanguage
 name: FastAPI CI/CD Pipeline
 
@@ -111,3 +117,4 @@ jobs:
                   git push https://x-access-token:${{ secrets.GH_PAT }}@github.com/[USERNAME]/[REPO NAME].git "v$VERSION"
 
 ```
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
