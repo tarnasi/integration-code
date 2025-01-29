@@ -2,55 +2,49 @@ name: FastAPI CI/CD Pipeline
 
 on:
     push:
-        branches: [ 'main', 'feature/**']
-        tags: [ 'v*']
+        branches:
+            - main
     pull_request:
         branches:
             - main
 
-env:
-  GH_PAT: ${{ secrets.GH_PAT }}
-
 jobs:
     test-build-tag:
         runs-on: ubuntu-latest
-
+        permissions:
+            contents: write
         steps:
-            # Clone Code
             - name: Checkout code
               uses: actions/checkout@v4
 
-            # Python Config
             - name: Set up Python 3.10
               uses: actions/setup-python@v3
               with:
                   python-version: "3.10"
 
-            # Dependencies
             - name: Install dependencies
               run: |
                   python -m pip install --upgrade pip
                   pip install -r requirements.txt
 
-            # Run Tests
             - name: Run Tests
               run: |
                 pytest
 
-            # Build Docker
             - name: Build Docker Image
               run: |
                   docker build -t integration-app .
 
-            # Git Config
             - name: Configure Git user
               run: |
                 git config --local user.name "GitHub Action"
                 git config --local user.email "action@github.com"
+                git remote set-url origin https://github.com/tarnasi/integration-code.git
 
-            # Create and Push Tag
             - name: Create and push tag
-              if: success() # Only if tests pass
+              if: success()
+              env:
+                  GH_PAT: ${{ secrets.GH_PAT }}
               run: |
                   VERSION=$(date '+%Y.%m.%d-%H%M')
                   git tag -a "v$VERSION" -m "New version $VERSION"
