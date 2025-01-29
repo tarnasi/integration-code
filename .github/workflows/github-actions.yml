@@ -47,7 +47,9 @@ jobs:
 
             # Create new Tag
             - name: Create and push tag
-              if: success() # if test passed code will be taged
+              if: success() # if test passed code will be tag
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
               run: |
                   VERSION=$(date '+%Y.%m.%d-%H%M') # Based on datetime
                   git tag -a "v$VERSION" -m "New version $VERSION"
