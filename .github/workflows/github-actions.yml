@@ -2,8 +2,8 @@ name: FastAPI CI/CD Pipeline
 
 on:
     push:
-        branches:
-            - main
+        branches: [ 'main', 'feature/**']
+        tags: [ 'v*']
     pull_request:
         branches:
             - main
